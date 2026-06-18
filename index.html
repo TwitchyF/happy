@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DATALYTICS.TOOLS</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Inter:wght@300;400;500;600&display=swap');
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #0b0b0b;
+    --surface: #141414;
+    --surface2: #1c1c1c;
+    --border: #2a2a2a;
+    --accent: #4ade80;
+    --accent-dim: rgba(74,222,128,0.12);
+    --accent2: #818cf8;
+    --text: #e2e2e2;
+    --muted: #666;
+    --mono: 'Space Mono', monospace;
+    --sans: 'Inter', sans-serif;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    font-size: 15px;
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+
+  /* NAV */
+  nav {
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(11,11,11,0.92);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 28px; height: 56px;
+  }
+  .nav-logo {
+    font-family: var(--mono);
+    font-size: 13px; font-weight: 700;
+    letter-spacing: 0.15em;
+    color: var(--text);
+  }
+  .nav-logo span { color: var(--muted); font-weight: 400; }
+  .nav-menu { display: flex; gap: 24px; }
+  .nav-menu a {
+    font-family: var(--mono);
+    font-size: 11px; letter-spacing: 0.1em;
+    color: var(--muted); text-decoration: none;
+    text-transform: uppercase; transition: color .2s;
+  }
+  .nav-menu a:hover { color: var(--accent); }
+
+  /* HERO */
+  .hero {
+    padding: 64px 28px 48px;
+    border-bottom: 1px solid var(--border);
+  }
+  .eyebrow {
+    font-family: var(--mono); font-size: 11px;
+    letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--muted); margin-bottom: 12px;
+  }
+  .eyebrow::before { content: '◆ '; color: var(--accent); }
+  h1 {
+    font-family: var(--mono); font-size: clamp(32px, 7vw, 52px);
+    font-weight: 700; letter-spacing: -0.02em;
+    line-height: 1.05; margin-bottom: 20px;
+  }
+  h1 .slash { color: var(--accent); }
+  .hero-desc {
+    max-width: 520px; color: #aaa; font-size: 15px; line-height: 1.7;
+    margin-bottom: 32px;
+  }
+  .hero-desc strong { color: var(--text); }
+
+  /* STAT CARDS */
+  .stats-row {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 12px; max-width: 420px;
+  }
+  .stat-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 16px 20px;
+  }
+  .stat-label {
+    font-family: var(--mono); font-size: 10px;
+    letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--muted); margin-bottom: 6px;
+  }
+  .stat-label::before { content: '◆ '; color: var(--accent); }
+  .stat-value {
+    font-family: var(--mono); font-size: 32px; font-weight: 700;
+    color: var(--text); line-height: 1;
+  }
+
+  /* MAIN LAYOUT */
+  .container { padding: 0 28px; }
+
+  /* SECTION */
+  .section {
+    border: 1px solid var(--border);
+    background: var(--surface);
+    margin: 24px 0;
+    overflow: hidden;
+  }
+  .section-header {
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .section-title {
+    font-family: var(--mono); font-size: 11px;
+    letter-spacing: 0.15em; text-transform: uppercase; color: var(--muted);
+  }
+  .section-title::before { content: '◆ '; color: var(--accent); }
+  .badge {
+    font-family: var(--mono); font-size: 10px;
+    letter-spacing: 0.12em; text-transform: uppercase;
+    border: 1px solid var(--border);
+    padding: 3px 10px; color: var(--muted);
+  }
+  .badge.live { border-color: var(--accent); color: var(--accent); }
+  .badge.done { border-color: #4ade80; color: #4ade80; }
+  .badge.running {
+    border-color: #fbbf24; color: #fbbf24;
+    animation: pulse 1.5s infinite;
+  }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
+
+  /* PIPELINE STEPS */
+  .pipeline { padding: 20px; }
+  .step {
+    display: flex; gap: 16px; align-items: flex-start;
+    padding: 16px 0;
+    border-bottom: 1px solid var(--border);
+    cursor: pointer;
+    transition: background .15s;
+  }
+  .step:last-child { border-bottom: none; }
+  .step:hover { background: rgba(255,255,255,.02); }
+  .step-num {
+    font-family: var(--mono); font-size: 11px; font-weight: 700;
+    color: var(--muted); min-width: 28px; padding-top: 2px;
+  }
+  .step.active .step-num { color: var(--accent); }
+  .step-body { flex: 1; }
+  .step-title {
+    font-family: var(--mono); font-size: 13px; font-weight: 700;
+    color: var(--text); margin-bottom: 6px; letter-spacing: 0.02em;
+  }
+  .step.active .step-title { color: var(--accent); }
+  .step-desc { font-size: 13px; color: #888; line-height: 1.6; }
+  .step-meta {
+    margin-top: 10px; display: flex; gap: 8px; flex-wrap: wrap;
+  }
+  .tag {
+    font-family: var(--mono); font-size: 10px;
+    letter-spacing: 0.1em; text-transform: uppercase;
+    background: var(--surface2); border: 1px solid var(--border);
+    padding: 2px 8px; color: var(--muted);
+  }
+  .step-status { margin-top: 8px; }
+  .progress-bar {
+    height: 2px; background: var(--border); margin-top: 8px; overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%; background: var(--accent);
+    transition: width 1s ease;
+  }
+
+  /* OUTPUT TABLE */
+  .output-block {
+    background: #0f0f0f;
+    border: 1px solid var(--border);
+    margin: 0 20px 20px;
+    padding: 16px;
+    font-family: var(--mono); font-size: 12px;
+    color: #aaa; overflow-x: auto;
+  }
+  .output-block .green { color: var(--accent); }
+  .output-block .yellow { color: #fbbf24; }
+  .output-block .blue { color: #60a5fa; }
+  .output-block .dim { color: var(--muted); }
+
+  /* METRICS GRID */
+  .metrics-grid {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 1px; background: var(--border);
+    margin: 0 20px 20px;
+  }
+  .metric-cell {
+    background: var(--surface2); padding: 14px 16px;
+  }
+  .metric-key {
+    font-family: var(--mono); font-size: 10px;
+    letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--muted); margin-bottom: 4px;
+  }
+  .metric-val {
+    font-family: var(--mono); font-size: 20px; font-weight: 700; color: var(--text);
+  }
+  .metric-val.up { color: var(--accent); }
+  .metric-val.warn { color: #fbbf24; }
+
+  /* VOTING SECTION */
+  .vote-section { padding: 20px; }
+  .vote-question {
+    padding: 20px 0; border-bottom: 1px solid var(--border);
+  }
+  .vote-question:last-of-type { border-bottom: none; }
+  .vote-q-text {
+    font-size: 14px; color: var(--text); margin-bottom: 14px; line-height: 1.5;
+  }
+  .vote-q-num {
+    font-family: var(--mono); font-size: 10px;
+    color: var(--muted); display: inline-block; margin-bottom: 6px;
+    letter-spacing: 0.1em;
+  }
+
+  /* STARS */
+  .stars { display: flex; gap: 6px; }
+  .star {
+    font-size: 22px; cursor: pointer;
+    color: var(--border); transition: color .15s, transform .1s;
+    user-select: none;
+  }
+  .star:hover, .star.selected { color: #fbbf24; transform: scale(1.15); }
+
+  /* RADIO OPTIONS */
+  .radio-group { display: flex; gap: 8px; flex-wrap: wrap; }
+  .radio-opt {
+    font-family: var(--mono); font-size: 12px;
+    border: 1px solid var(--border);
+    padding: 6px 14px; cursor: pointer;
+    color: var(--muted); letter-spacing: 0.08em;
+    transition: all .15s; user-select: none;
+  }
+  .radio-opt:hover { border-color: var(--accent); color: var(--accent); }
+  .radio-opt.selected {
+    background: var(--accent-dim); border-color: var(--accent); color: var(--accent);
+  }
+
+  /* TEXTAREA */
+  .feedback-input {
+    width: 100%; background: var(--surface2);
+    border: 1px solid var(--border); color: var(--text);
+    font-family: var(--sans); font-size: 14px;
+    padding: 12px 14px; resize: vertical; min-height: 80px;
+    margin-top: 6px; outline: none;
+    transition: border-color .2s;
+  }
+  .feedback-input:focus { border-color: var(--accent); }
+  .feedback-input::placeholder { color: var(--muted); }
+
+  /* SUBMIT */
+  .submit-area { padding: 20px; border-top: 1px solid var(--border); }
+  .submit-row { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+  .btn-submit {
+    font-family: var(--mono); font-size: 12px;
+    letter-spacing: 0.12em; text-transform: uppercase;
+    background: var(--accent); color: #000;
+    border: none; padding: 12px 28px;
+    cursor: pointer; font-weight: 700;
+    transition: opacity .2s, transform .1s;
+  }
+  .btn-submit:hover { opacity: .85; transform: translateY(-1px); }
+  .btn-submit:active { transform: translateY(0); }
+  .btn-reset {
+    font-family: var(--mono); font-size: 12px;
+    letter-spacing: 0.12em; text-transform: uppercase;
+    background: transparent; color: var(--muted);
+    border: 1px solid var(--border); padding: 12px 22px;
+    cursor: pointer; transition: all .2s;
+  }
+  .btn-reset:hover { border-color: var(--muted); color: var(--text); }
+  .submit-note {
+    font-family: var(--mono); font-size: 11px;
+    color: var(--muted); letter-spacing: 0.08em;
+  }
+
+  /* SUCCESS TOAST */
+  .toast {
+    position: fixed; bottom: 24px; right: 24px;
+    background: var(--surface2); border: 1px solid var(--accent);
+    padding: 14px 20px; font-family: var(--mono); font-size: 12px;
+    color: var(--accent); letter-spacing: 0.08em;
+    transform: translateY(80px); opacity: 0;
+    transition: all .3s ease; z-index: 999;
+  }
+  .toast.show { transform: translateY(0); opacity: 1; }
+
+  /* FOOTER */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 24px 28px;
+    display: flex; align-items: center; justify-content: space-between;
+    flex-wrap: wrap; gap: 12px;
+    margin-top: 40px;
+  }
+  .footer-logo { font-family: var(--mono); font-size: 12px; letter-spacing: 0.12em; color: var(--muted); }
+  .footer-logo strong { color: var(--text); }
+  .footer-note { font-family: var(--mono); font-size: 11px; color: var(--muted); letter-spacing: 0.08em; }
+
+  @media (max-width: 500px) {
+    .stats-row { grid-template-columns: 1fr 1fr; }
+    .metrics-grid { grid-template-columns: 1fr; }
+    .nav-menu { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">DATALYTICS<span>.TOOLS</span></div>
+  <div class="nav-menu">
+    <a href="#pipeline">Pipeline</a>
+    <a href="#hasil">Hasil</a>
+    <a href="#rating">Rating</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="eyebrow">Datalytics Tools</div>
+  <h1>ANALISIS<br>DATA<span class="slash"> /</span></h1>
+  <p class="hero-desc">
+    <strong>Datalytics</strong> adalah toolset ringan untuk kebutuhan analisis dataset sehari-hari.
+    Bersih, cepat, dan dibangun tanpa noise yang tidak perlu — hanya alat yang bekerja.
+  </p>
+  <div class="stats-row">
+    <div class="stat-card">
+      <div class="stat-label">Dataset</div>
+      <div class="stat-value" id="ctr-dataset">0</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Records</div>
+      <div class="stat-value" id="ctr-records">0</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Fitur</div>
+      <div class="stat-value" id="ctr-fitur">0</div>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+
+  <!-- PIPELINE -->
+  <div id="pipeline" class="section">
+    <div class="section-header">
+      <div class="section-title">Tahapan Pemrosesan Dataset</div>
+      <div class="badge live">Running</div>
+    </div>
+    <div class="pipeline">
+
+      <div class="step active" onclick="toggleStep(this)">
+        <div class="step-num">01</div>
+        <div class="step-body">
+          <div class="step-title">Data Ingestion</div>
+          <div class="step-desc">Membaca dan memuat dataset dari sumber — CSV, JSON, SQL, atau API. Validasi format file dan encoding karakter dilakukan di tahap ini.</div>
+          <div class="step-meta">
+            <span class="tag">CSV</span>
+            <span class="tag">JSON</span>
+            <span class="tag">SQL</span>
+            <span class="tag">API</span>
+          </div>
+          <div class="progress-bar"><div class="progress-fill" style="width:100%"></div></div>
+        </div>
+        <div><span class="badge done">Done</span></div>
+      </div>
+
+      <div class="step active" onclick="toggleStep(this)">
+        <div class="step-num">02</div>
+        <div class="step-body">
+          <div class="step-title">Exploratory Data Analysis</div>
+          <div class="step-desc">Menjelajahi struktur data: distribusi nilai, tipe kolom, statistik deskriptif, dan identifikasi awal anomali atau pola menarik.</div>
+          <div class="step-meta">
+            <span class="tag">Describe</span>
+            <span class="tag">Correlation</span>
+            <span class="tag">Distribution</span>
+          </div>
+          <div class="progress-bar"><div class="progress-fill" style="width:100%"></div></div>
+        </div>
+        <div><span class="badge done">Done</span></div>
+      </div>
+
+      <div class="step active" onclick="toggleStep(this)">
+        <div class="step-num">03</div>
+        <div class="step-body">
+          <div class="step-title">Data Cleaning</div>
+          <div class="step-desc">Menangani nilai hilang (missing values), duplikasi baris, outlier ekstrem, dan inkonsistensi format. Output: dataset bersih siap proses lanjut.</div>
+          <div class="step-meta">
+            <span class="tag">Null Handling</span>
+            <span class="tag">Dedup</span>
+            <span class="tag">Outlier</span>
+          </div>
+          <div class="progress-bar"><div class="progress-fill" style="width:100%"></div></div>
+        </div>
+        <div><span class="badge done">Done</span></div>
+      </div>
+
+      <div class="step active" onclick="toggleStep(this)">
+        <div class="step-num">04</div>
+        <div class="step-body">
+          <div class="step-title">Feature Engineering</div>
+          <div class="step-desc">Membuat fitur baru dari fitur yang ada, encoding variabel kategorikal, normalisasi/standarisasi skala numerik, dan seleksi fitur relevan.</div>
+          <div class="step-meta">
+            <span class="tag">Encoding</span>
+            <span class="tag">Scaling</span>
+            <span class="tag">Selection</span>
+          </div>
+          <div class="progress-bar"><div class="progress-fill" style="width:88%"></div></div>
+        </div>
+        <div><span class="badge running">88%</span></div>
+      </div>
+
+      <div class="step" onclick="toggleStep(this)">
+        <div class="step-num">05</div>
+        <div class="step-body">
+          <div class="step-title">Model Training & Evaluasi</div>
+          <div class="step-desc">Melatih model statistik atau machine learning pada dataset yang telah diproses. Evaluasi performa menggunakan metrik yang sesuai dengan tipe masalah.</div>
+          <div class="step-meta">
+            <span class="tag">Train/Test Split</span>
+            <span class="tag">Cross-Val</span>
+            <span class="tag">Metrics</span>
+          </div>
+          <div class="progress-bar"><div class="progress-fill" style="width:0%"></div></div>
+        </div>
+        <div><span class="badge">Queue</span></div>
+      </div>
+
+      <div class="step" onclick="toggleStep(this)">
+        <div class="step-num">06</div>
+        <div class="step-body">
+          <div class="step-title">Reporting & Visualisasi</div>
+          <div class="step-desc">Menyajikan hasil analisis dalam bentuk laporan ringkas, grafik, dan dashboard interaktif untuk pengambilan keputusan berbasis data.</div>
+          <div class="step-meta">
+            <span class="tag">Charts</span>
+            <span class="tag">Dashboard</span>
+            <span class="tag">Export</span>
+          </div>
+          <div class="progress-bar"><div class="progress-fill" style="width:0%"></div></div>
+        </div>
+        <div><span class="badge">Queue</span></div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- OUTPUT LOG -->
+  <div id="hasil" class="section">
+    <div class="section-header">
+      <div class="section-title">Output Log</div>
+      <div class="badge done">Live</div>
+    </div>
+    <div class="output-block">
+<span class="dim">$</span> <span class="green">loading dataset...</span><br>
+<span class="dim">  ✓ rows loaded    : </span><span class="blue">12,847</span><br>
+<span class="dim">  ✓ columns found  : </span><span class="blue">24</span><br>
+<span class="dim">  ✓ encoding       : </span><span class="blue">UTF-8</span><br>
+<br>
+<span class="dim">$</span> <span class="green">running EDA...</span><br>
+<span class="dim">  ✓ null values    : </span><span class="yellow">3.2% detected</span><br>
+<span class="dim">  ✓ duplicates     : </span><span class="green">0 found</span><br>
+<span class="dim">  ✓ outliers (IQR) : </span><span class="yellow">142 flagged</span><br>
+<br>
+<span class="dim">$</span> <span class="green">cleaning pipeline...</span><br>
+<span class="dim">  ✓ imputed nulls  : </span><span class="blue">median strategy</span><br>
+<span class="dim">  ✓ dropped rows   : </span><span class="blue">89 rows</span><br>
+<span class="dim">  ✓ clean dataset  : </span><span class="green">12,758 rows ready</span><br>
+<br>
+<span class="dim">$</span> <span class="yellow">feature engineering in progress...</span><br>
+<span class="dim">  → encoding categoricals [████████░░] 88%</span>
+    </div>
+
+    <div class="metrics-grid">
+      <div class="metric-cell">
+        <div class="metric-key">Akurasi Awal</div>
+        <div class="metric-val up">87.4%</div>
+      </div>
+      <div class="metric-cell">
+        <div class="metric-key">Missing Values</div>
+        <div class="metric-val warn">3.2%</div>
+      </div>
+      <div class="metric-cell">
+        <div class="metric-key">Data Bersih</div>
+        <div class="metric-val">12,758</div>
+      </div>
+      <div class="metric-cell">
+        <div class="metric-key">Fitur Terpilih</div>
+        <div class="metric-val up">18 / 24</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RATING / VOTING -->
+  <div id="rating" class="section">
+    <div class="section-header">
+      <div class="section-title">Penilaian Hasil Analisis</div>
+      <div class="badge">Feedback</div>
+    </div>
+
+    <div class="vote-section">
+
+      <!-- Q1: Stars -->
+      <div class="vote-question">
+        <div class="vote-q-num">Q.01 — Kepuasan Umum</div>
+        <div class="vote-q-text">Seberapa puas kamu dengan hasil analisis dataset ini secara keseluruhan?</div>
+        <div class="stars" id="stars1">
+          <span class="star" data-val="1">★</span>
+          <span class="star" data-val="2">★</span>
+          <span class="star" data-val="3">★</span>
+          <span class="star" data-val="4">★</span>
+          <span class="star" data-val="5">★</span>
+        </div>
+      </div>
+
+      <!-- Q2: Radio -->
+      <div class="vote-question">
+        <div class="vote-q-num">Q.02 — Kualitas Data Cleaning</div>
+        <div class="vote-q-text">Apakah proses pembersihan data sudah menangani missing values dan outlier dengan tepat?</div>
+        <div class="radio-group" id="radio1">
+          <div class="radio-opt" data-val="sangat_tepat">Sangat Tepat</div>
+          <div class="radio-opt" data-val="cukup">Cukup</div>
+          <div class="radio-opt" data-val="kurang">Kurang Tepat</div>
+          <div class="radio-opt" data-val="tidak_tahu">Tidak Tahu</div>
+        </div>
+      </div>
+
+      <!-- Q3: Stars -->
+      <div class="vote-question">
+        <div class="vote-q-num">Q.03 — Relevansi Fitur</div>
+        <div class="vote-q-text">Seberapa relevan fitur-fitur yang dipilih untuk mendukung tujuan analisis?</div>
+        <div class="stars" id="stars2">
+          <span class="star" data-val="1">★</span>
+          <span class="star" data-val="2">★</span>
+          <span class="star" data-val="3">★</span>
+          <span class="star" data-val="4">★</span>
+          <span class="star" data-val="5">★</span>
+        </div>
+      </div>
+
+      <!-- Q4: Radio -->
+      <div class="vote-question">
+        <div class="vote-q-num">Q.04 — Performa Pipeline</div>
+        <div class="vote-q-text">Bagaimana kecepatan dan efisiensi pipeline pemrosesan dataset ini?</div>
+        <div class="radio-group" id="radio2">
+          <div class="radio-opt" data-val="sangat_cepat">Sangat Cepat</div>
+          <div class="radio-opt" data-val="normal">Normal</div>
+          <div class="radio-opt" data-val="lambat">Lambat</div>
+        </div>
+      </div>
+
+      <!-- Q5: Text -->
+      <div class="vote-question">
+        <div class="vote-q-num">Q.05 — Catatan Tambahan</div>
+        <div class="vote-q-text">Ada saran atau hal yang perlu diperbaiki dari proses analisis ini?</div>
+        <textarea class="feedback-input" id="feedback" placeholder="Tulis catatan di sini..."></textarea>
+      </div>
+
+    </div>
+
+    <div class="submit-area">
+      <div class="submit-row">
+        <button class="btn-submit" onclick="submitVote()">◆ SUBMIT PENILAIAN</button>
+        <button class="btn-reset" onclick="resetForm()">RESET</button>
+        <span class="submit-note" id="submit-note"></span>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo"><strong>DATALYTICS</strong>.TOOLS</div>
+  <div class="footer-note">◆ AVAILABLE: DATA ANALYSIS · EDA · FEATURE ENG</div>
+</footer>
+
+<!-- TOAST -->
+<div class="toast" id="toast">◆ Penilaian berhasil dikirim. Terima kasih!</div>
+
+<script>
+  // Counter animation
+  function animateCount(id, target, duration) {
+    const el = document.getElementById(id);
+    let start = 0;
+    const step = target / (duration / 16);
+    const t = setInterval(() => {
+      start = Math.min(start + step, target);
+      el.textContent = Math.floor(start).toLocaleString('id');
+      if (start >= target) clearInterval(t);
+    }, 16);
+  }
+  window.addEventListener('load', () => {
+    animateCount('ctr-dataset', 47, 1200);
+    animateCount('ctr-records', 12758, 1800);
+    animateCount('ctr-fitur', 18, 1000);
+  });
+
+  // Step toggle
+  function toggleStep(el) {
+    el.classList.toggle('active');
+  }
+
+  // Star rating
+  document.querySelectorAll('.stars').forEach(group => {
+    const stars = group.querySelectorAll('.star');
+    let selected = 0;
+    stars.forEach(star => {
+      star.addEventListener('mouseenter', () => {
+        const val = +star.dataset.val;
+        stars.forEach(s => s.classList.toggle('selected', +s.dataset.val <= val));
+      });
+      star.addEventListener('mouseleave', () => {
+        stars.forEach(s => s.classList.toggle('selected', +s.dataset.val <= selected));
+      });
+      star.addEventListener('click', () => {
+        selected = +star.dataset.val;
+        group.dataset.value = selected;
+        stars.forEach(s => s.classList.toggle('selected', +s.dataset.val <= selected));
+      });
+    });
+  });
+
+  // Radio
+  document.querySelectorAll('.radio-group').forEach(group => {
+    group.querySelectorAll('.radio-opt').forEach(opt => {
+      opt.addEventListener('click', () => {
+        group.querySelectorAll('.radio-opt').forEach(o => o.classList.remove('selected'));
+        opt.classList.add('selected');
+        group.dataset.value = opt.dataset.val;
+      });
+    });
+  });
+
+  // Submit
+  function submitVote() {
+    const s1 = document.getElementById('stars1').dataset.value;
+    const s2 = document.getElementById('stars2').dataset.value;
+    const r1 = document.getElementById('radio1').dataset.value;
+    const r2 = document.getElementById('radio2').dataset.value;
+
+    if (!s1 || !r1) {
+      document.getElementById('submit-note').textContent = '⚠ Harap isi semua pertanyaan wajib.';
+      document.getElementById('submit-note').style.color = '#fbbf24';
+      return;
+    }
+
+    document.getElementById('submit-note').textContent = '';
+    const toast = document.getElementById('toast');
+    toast.classList.add('show');
+    setTimeout(() => {
+      window.location.href = 'index2.html';
+    }, 1);
+  }
+
+  function resetForm() {
+    document.querySelectorAll('.star').forEach(s => s.classList.remove('selected'));
+    document.querySelectorAll('.stars').forEach(g => delete g.dataset.value);
+    document.querySelectorAll('.radio-opt').forEach(o => o.classList.remove('selected'));
+    document.querySelectorAll('.radio-group').forEach(g => delete g.dataset.value);
+    document.getElementById('feedback').value = '';
+    document.getElementById('submit-note').textContent = '';
+  }
+</script>
+</body>
+</html>
